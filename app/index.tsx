@@ -1,13 +1,25 @@
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { theme } from "../assets/colors";
 
 export default function HomeScreen() {
   const [working, setWorking] = useState(true);
+  const [text, setText] = useState("");
 
   const travel = () => setWorking(false);
   const work = () => setWorking(true);
+
+  const onChangeText = (payload: string) => {
+    setText(payload);
+    console.log(payload);
+  };
 
   return (
     <View style={styles.container}>
@@ -28,6 +40,18 @@ export default function HomeScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+
+      <TextInput
+        style={styles.input}
+        onChangeText={onChangeText}
+        returnKeyType="send"
+        // secureTextEntry // 비밀번호 입력시
+        multiline // 두 줄 이상 입력
+        // autoCapitalize="words" // 단어의 시작은 대문자로 입력
+        placeholder={working ? "Add a To Do" : "Where do you want to go?"}
+        placeholderTextColor={"blue"}
+        value={text}
+      />
     </View>
   );
 }
@@ -47,5 +71,13 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 38,
     fontWeight: 600,
+  },
+  input: {
+    backgroundColor: "white",
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 30,
+    marginTop: 20,
+    fontSize: 18,
   },
 });
