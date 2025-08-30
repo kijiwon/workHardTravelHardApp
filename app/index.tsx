@@ -1,5 +1,6 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -9,6 +10,9 @@ import {
   View,
 } from "react-native";
 import { theme } from "../assets/colors";
+
+// storage key
+const STORAGE_KEY = "@todos";
 
 export default function HomeScreen() {
   const [working, setWorking] = useState(true);
@@ -22,13 +26,36 @@ export default function HomeScreen() {
     setText(payload);
   };
 
-  const addTodo = () => {
+  const addTodo = async () => {
     if (text === "") return;
 
     const newTodos = { ...todos, [Date.now()]: { text, working } };
     setTodos(newTodos);
+    await saveTodos(newTodos);
     setText("");
   };
+
+  const saveTodos = async (toSave: object) => {
+    try {
+      const todoData = JSON.stringify(toSave);
+      await AsyncStorage.setItem(STORAGE_KEY, todoData);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const loadTodos = async () => {
+    try {
+      const res = await AsyncStorage.getItem(STORAGE_KEY);
+      if (res) setTodos(JSON.parse(res));
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    loadTodos();
+  }, []);
 
   return (
     <View style={styles.container}>
