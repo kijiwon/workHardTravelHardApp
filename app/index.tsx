@@ -25,7 +25,7 @@ export default function HomeScreen() {
   const addTodo = () => {
     if (text === "") return;
 
-    const newTodos = { ...todos, [Date.now()]: { text, work: working } };
+    const newTodos = { ...todos, [Date.now()]: { text, working } };
     setTodos(newTodos);
     setText("");
   };
@@ -64,11 +64,14 @@ export default function HomeScreen() {
       />
 
       <ScrollView>
-        {Object.keys(todos)!.map((key) => (
-          <View key={key} style={styles.todo}>
-            <Text style={styles.todoText}>{todos[key].text}</Text>
-          </View>
-        ))}
+        {Object.keys(todos)!.map(
+          (key) =>
+            todos[key].working === working && (
+              <View key={key} style={styles.todo}>
+                <Text style={styles.todoText}>{todos[key].text}</Text>
+              </View>
+            )
+        )}
       </ScrollView>
     </View>
   );
