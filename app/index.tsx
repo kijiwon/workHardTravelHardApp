@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import {
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -19,20 +20,16 @@ export default function HomeScreen() {
 
   const onChangeText = (payload: string) => {
     setText(payload);
-    console.log(payload);
   };
 
   const addTodo = () => {
     if (text === "") return;
 
-    const newTodos = Object.assign({}, todos, {
-      [Date.now()]: { text, work: working },
-    });
+    const newTodos = { ...todos, [Date.now()]: { text, work: working } };
     setTodos(newTodos);
     setText("");
   };
 
-  console.log(todos);
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
@@ -65,6 +62,14 @@ export default function HomeScreen() {
         placeholderTextColor={"blue"}
         value={text}
       />
+
+      <ScrollView>
+        {Object.keys(todos)!.map((key) => (
+          <View key={key} style={styles.todo}>
+            <Text style={styles.todoText}>{todos[key].text}</Text>
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
 }
@@ -90,7 +95,19 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 30,
-    marginTop: 20,
+    marginVertical: 20,
     fontSize: 18,
+  },
+  todo: {
+    backgroundColor: theme.todoBg,
+    marginBottom: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+  },
+  todoText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "500",
   },
 });
