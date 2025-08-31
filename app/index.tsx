@@ -1,7 +1,9 @@
+import { Fontisto } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -42,6 +44,24 @@ export default function HomeScreen() {
     } catch (e) {
       console.log(e);
     }
+  };
+
+  const deleteTodo = (key: string) => {
+    Alert.alert("Delete To Do", "Are you sure?", [
+      {
+        text: "Cancel",
+      },
+      {
+        text: "Sure", // 삭제 동작 실행
+        style: "destructive",
+        onPress: async () => {
+          const newTodos = { ...todos };
+          delete newTodos[key]; // 동일한 key의 데이터 삭제
+          setTodos(newTodos);
+          await saveTodos(newTodos);
+        },
+      },
+    ]);
   };
 
   const loadTodos = async () => {
@@ -96,6 +116,9 @@ export default function HomeScreen() {
             todos[key].working === working && (
               <View key={key} style={styles.todo}>
                 <Text style={styles.todoText}>{todos[key].text}</Text>
+                <TouchableOpacity onPress={() => deleteTodo(key)}>
+                  <Fontisto name="trash" size={18} color={theme.grey} />
+                </TouchableOpacity>
               </View>
             )
         )}
@@ -134,6 +157,9 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 20,
     borderRadius: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   todoText: {
     color: "white",
