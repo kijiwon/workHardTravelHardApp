@@ -157,7 +157,16 @@ export default function HomeScreen() {
                     <Fontisto name="checkbox-passive" size={24} color="black" />
                   </TouchableOpacity>
                 )}
-                <Text style={styles.todoText}>{todos[key].text}</Text>
+                <Text
+                  style={{
+                    ...styles.todoText,
+                    color: todos[key].complete === true ? theme.grey : "white",
+                    textDecorationLine:
+                      todos[key].complete === true && "line-through",
+                  }}
+                >
+                  {todos[key].text}
+                </Text>
                 <TouchableOpacity onPress={() => deleteTodo(key)}>
                   <Fontisto name="trash" size={18} color={theme.grey} />
                 </TouchableOpacity>
@@ -204,7 +213,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   todoText: {
-    color: "white",
+    // color: "white",
     fontSize: 16,
     fontWeight: "500",
   },
