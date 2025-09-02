@@ -38,7 +38,10 @@ export default function HomeScreen() {
   const addTodo = async () => {
     if (text === "") return;
 
-    const newTodos = { ...todos, [Date.now()]: { text, working } };
+    const newTodos = {
+      ...todos,
+      [Date.now()]: { text, working, complete: false },
+    };
     setTodos(newTodos);
     await saveTodos(newTodos);
     setText("");
@@ -71,10 +74,27 @@ export default function HomeScreen() {
     ]);
   };
 
+  const completeTodo = (key: string) => {
+    Alert.alert("Complete To Do", "Are you sure?", [
+      {
+        text: "Not Yet",
+        style: "destructive",
+      },
+      {
+        text: "Done",
+        onPress: async () => {
+          const newTodos = { ...todos };
+          newTodos[key].complete = true;
+          setTodos(newTodos);
+          await saveTodos(newTodos);
+        },
+      },
+    ]);
+  };
+
   const loadTodos = async () => {
     try {
       const mode = await AsyncStorage.getItem("@mode");
-      console.log("mode>>>", mode);
       if (mode === "working") {
         setWorking(true);
       } else {
@@ -130,6 +150,13 @@ export default function HomeScreen() {
           (key) =>
             todos[key].working === working && (
               <View key={key} style={styles.todo}>
+                {todos[key].complete === true ? (
+                  <Fontisto name="checkbox-active" size={24} color="black" />
+                ) : (
+                  <TouchableOpacity onPress={() => completeTodo(key)}>
+                    <Fontisto name="checkbox-passive" size={24} color="black" />
+                  </TouchableOpacity>
+                )}
                 <Text style={styles.todoText}>{todos[key].text}</Text>
                 <TouchableOpacity onPress={() => deleteTodo(key)}>
                   <Fontisto name="trash" size={18} color={theme.grey} />
