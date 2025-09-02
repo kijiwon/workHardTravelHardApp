@@ -21,8 +21,15 @@ export default function HomeScreen() {
   const [text, setText] = useState("");
   const [todos, setTodos] = useState({}); // hashmap 형태로 사용
 
-  const travel = () => setWorking(false);
-  const work = () => setWorking(true);
+  const onChangeMode = async (mode: string) => {
+    if (mode === "working") setWorking(true);
+    if (mode === "travel") setWorking(false);
+    try {
+      await AsyncStorage.setItem("@mode", mode);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const onChangeText = (payload: string) => {
     setText(payload);
@@ -66,6 +73,14 @@ export default function HomeScreen() {
 
   const loadTodos = async () => {
     try {
+      const mode = await AsyncStorage.getItem("@mode");
+      console.log("mode>>>", mode);
+      if (mode === "working") {
+        setWorking(true);
+      } else {
+        setWorking(false);
+      }
+
       const res = await AsyncStorage.getItem(STORAGE_KEY);
       if (res) setTodos(JSON.parse(res));
     } catch (e) {
@@ -81,14 +96,14 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <StatusBar style="light" />
       <View style={styles.header}>
-        <TouchableOpacity onPress={work}>
+        <TouchableOpacity onPress={() => onChangeMode("working")}>
           <Text
             style={{ ...styles.btnText, color: working ? "white" : theme.grey }}
           >
             Work
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={travel}>
+        <TouchableOpacity onPress={() => onChangeMode("travel")}>
           <Text
             style={{ ...styles.btnText, color: working ? theme.grey : "white" }}
           >
